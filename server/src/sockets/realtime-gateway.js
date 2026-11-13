@@ -4,6 +4,7 @@ import { trucksById } from "../data/trucks.js";
 import { alertEvents } from "../events/alert-events.js";
 import { telemetryEvents } from "../events/telemetry-events.js";
 import { getFleetSummary } from "../services/fleet-state.js";
+import { pipelineMetrics } from "../services/pipeline-metrics.js";
 
 const BROADCAST_INTERVAL_MS = 150;
 
@@ -35,6 +36,8 @@ export class RealtimeGateway {
     this.broadcastIntervalMs = options.broadcastIntervalMs || BROADCAST_INTERVAL_MS;
     this.pendingByTruck = new Map();
     this.broadcastMessages = 0;
+    this.broadcastTimestamps = [];
+    this.coalescedEvents = 0;
     this.latencyTotalMs = 0;
     this.latencySamples = 0;
     this.queueTelemetry = this.queueTelemetry.bind(this);
@@ -45,6 +48,11 @@ export class RealtimeGateway {
     this.io.on("connection", this.handleConnection);
     this.timer = setInterval(() => this.flush(), this.broadcastIntervalMs);
     this.timer.unref?.();
+    this.metricsTimer = setInterval(() => {
+      this.emitSystemMetrics(pipelineMetrics.getSnapshot());
+    }, 1_000);
+    this.metricsTimer.unref?.();
+    pipelineMetrics.attachRealtimeGateway(this);
   }
 
   handleConnection(socket) {
@@ -83,7 +91,15 @@ export class RealtimeGateway {
   }
 
   queueTelemetry(state) {
+    if (this.pendingByTruck.has(state.truckId)) this.coalescedEvents += 1;
     this.pendingByTruck.set(state.truckId, state);
+  }
+
+  trackBroadcast(now = Date.now()) {
+    this.broadcastMessages += 1;
+    this.broadcastTimestamps.push(now);
+    const threshold = now - 1_000;
+    while (this.broadcastTimestamps[0] < threshold) this.broadcastTimestamps.shift();
   }
 
   flush() {
@@ -94,7 +110,7 @@ export class RealtimeGateway {
 
     changedStates.forEach((state) => {
       this.io.to(`truck:${state.truckId}`).emit("truck:update", state);
-      this.broadcastMessages += 1;
+      this.trackBroadcast();
       this.latencyTotalMs += Math.max(0, Date.now() - Date.parse(state.receivedAt));
       this.latencySamples += 1;
     });
@@ -104,35 +120,41 @@ export class RealtimeGateway {
       summary: getFleetSummary(),
       changedTrucks: changedStates.map(compactTruckState),
     });
-    this.broadcastMessages += 1;
+    this.trackBroadcast();
   }
 
   emitAlert(alert) {
     this.io.to("alerts").emit("alert:new", alert);
-    this.broadcastMessages += 1;
+    this.trackBroadcast();
   }
 
   emitSystemMetrics(metrics) {
     this.io.emit("system:metrics", metrics);
-    this.broadcastMessages += 1;
+    this.trackBroadcast();
   }
 
-  getStats() {
+  getStats(now = Date.now()) {
+    const threshold = now - 1_000;
+    while (this.broadcastTimestamps[0] < threshold) this.broadcastTimestamps.shift();
     return {
       connectedClients: this.io.engine.clientsCount,
       broadcastMessages: this.broadcastMessages,
+      broadcastMessagesPerSecond: this.broadcastTimestamps.length,
       averageBroadcastLatencyMs: this.latencySamples > 0
         ? Number((this.latencyTotalMs / this.latencySamples).toFixed(2))
         : 0,
+      coalescedEvents: this.coalescedEvents,
     };
   }
 
   stop() {
     clearInterval(this.timer);
+    clearInterval(this.metricsTimer);
     telemetryEvents.off("telemetry", this.queueTelemetry);
     alertEvents.off("alert", this.emitAlert);
     this.io.disconnectSockets(true);
     this.io.removeAllListeners();
+    pipelineMetrics.detachRealtimeGateway(this);
   }
 }
 

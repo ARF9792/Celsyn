@@ -2,10 +2,14 @@ import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
 import { resetFleetState } from "../src/services/fleet-state.js";
+import { pipelineMetrics } from "../src/services/pipeline-metrics.js";
 import { createTelemetry } from "./fixtures/telemetry.js";
 
 describe("telemetry ingestion API", () => {
-  beforeEach(() => resetFleetState());
+  beforeEach(() => {
+    resetFleetState();
+    pipelineMetrics.reset();
+  });
 
   it("ingests an event and exposes the updated truck state", async () => {
     const app = createApp();
@@ -51,6 +55,20 @@ describe("telemetry ingestion API", () => {
 
     expect(response.status).toBe(409);
     expect(response.body.code).toBe("STALE_SEQUENCE");
+  });
+
+  it("reports actual ingestion counters", async () => {
+    const app = createApp();
+    await request(app).post("/api/telemetry").send(createTelemetry());
+    await request(app).post("/api/telemetry").send({ invalid: true });
+
+    const response = await request(app).get("/api/system/metrics");
+    expect(response.body.metrics).toMatchObject({
+      eventsReceivedTotal: 2,
+      validEvents: 1,
+      rejectedEvents: 1,
+      droppedEvents: 0,
+    });
   });
 });
 

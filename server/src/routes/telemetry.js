@@ -6,6 +6,7 @@ import {
   telemetrySchema,
 } from "../schemas/telemetry.js";
 import { ingestTelemetry } from "../services/telemetry-service.js";
+import { pipelineMetrics } from "../services/pipeline-metrics.js";
 
 export const telemetryRouter = Router();
 
@@ -18,8 +19,10 @@ const rejection = (result) => ({
 });
 
 telemetryRouter.post("/", ingestionRateLimit, (request, response) => {
+  pipelineMetrics.recordReceived();
   const parsed = telemetrySchema.safeParse(request.body);
   if (!parsed.success) {
+    pipelineMetrics.recordRejected();
     return response.status(400).json({
       error: "Invalid telemetry event",
       issues: formatValidationIssues(parsed.error.issues),
@@ -28,8 +31,11 @@ telemetryRouter.post("/", ingestionRateLimit, (request, response) => {
 
   const result = ingestTelemetry(parsed.data);
   if (!result.accepted) {
+    pipelineMetrics.recordRejected();
     return response.status(result.reason === "UNKNOWN_TRUCK" ? 404 : 409).json(rejection(result));
   }
+
+  pipelineMetrics.recordAccepted();
 
   return response.status(202).json({
     accepted: true,
@@ -42,11 +48,15 @@ telemetryRouter.post("/", ingestionRateLimit, (request, response) => {
 telemetryRouter.post("/batch", ingestionRateLimit, (request, response) => {
   const batch = telemetryBatchSchema.safeParse(request.body);
   if (!batch.success) {
+    pipelineMetrics.recordReceived();
+    pipelineMetrics.recordRejected();
     return response.status(400).json({
       error: "Invalid telemetry batch",
       issues: formatValidationIssues(batch.error.issues),
     });
   }
+
+  pipelineMetrics.recordReceived(batch.data.length);
 
   const errors = [];
   let accepted = 0;
@@ -66,6 +76,9 @@ telemetryRouter.post("/batch", ingestionRateLimit, (request, response) => {
 
     accepted += 1;
   });
+
+  pipelineMetrics.recordAccepted(accepted);
+  pipelineMetrics.recordRejected(errors.length);
 
   return response.status(202).json({
     accepted,

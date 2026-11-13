@@ -6,6 +6,7 @@ import { demoRouter } from "./routes/demo.js";
 import { fleetRouter } from "./routes/fleet.js";
 import { telemetryRouter } from "./routes/telemetry.js";
 import { trucksRouter } from "./routes/trucks.js";
+import { systemRouter } from "./routes/system.js";
 
 export const createApp = () => {
   const app = express();
@@ -27,6 +28,7 @@ export const createApp = () => {
   app.use("/api/fleet", fleetRouter);
   app.use("/api/alerts", alertsRouter);
   app.use("/api/demo", demoRouter);
+  app.use("/api/system", systemRouter);
 
   app.use((request, response) => {
     response.status(404).json({
