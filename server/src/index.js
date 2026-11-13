@@ -3,9 +3,11 @@ import { createApp } from "./app.js";
 import { connectDatabase, disconnectDatabase } from "./config/database.js";
 import { env } from "./config/env.js";
 import { telemetryPersistence } from "./services/telemetry-persistence.js";
+import { RealtimeGateway } from "./sockets/realtime-gateway.js";
 
 const app = createApp();
 const server = createServer(app);
+const realtimeGateway = new RealtimeGateway(server);
 
 try {
   await connectDatabase();
@@ -33,6 +35,7 @@ const shutdown = (signal) => {
   if (shuttingDown) return;
   shuttingDown = true;
   console.log(JSON.stringify({ level: "info", message: "Shutting down", signal }));
+  realtimeGateway.stop();
   server.close(async (error) => {
     if (error) {
       console.error(error);
