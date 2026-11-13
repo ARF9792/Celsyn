@@ -172,12 +172,15 @@ Dashboard endpoints require `Authorization: Bearer <token>`. Telemetry ingestion
 | `GET` | `/api/trucks` | Fleet metadata and latest state |
 | `GET` | `/api/trucks/:truckId` | One truck snapshot |
 | `GET` | `/api/trucks/:truckId/history` | Bounded chronological history |
+| `GET` | `/api/trucks/:truckId/compliance` | Time-weighted cold-chain compliance analytics |
 | `GET` | `/api/fleet/summary` | Fleet health counts |
 | `GET` | `/api/alerts` | Recent in-session alerts |
 | `GET` | `/api/system/metrics` | Actual pipeline counters |
 | `POST` | `/api/demo/trucks/:truckId/temperature-excursion` | Activate a 30-second demo failure |
 
 History accepts `minutes`, `from`, `to`, and `limit` parameters. Limits are capped to prevent unbounded datasets.
+
+Compliance analytics accepts `minutes`, `from`, and `to`. It reports minimum, maximum, and average temperature; time and samples outside the safe range; compliance percentage; excursion count and recent excursion durations; and the worst recorded deviation. Analysis is capped at the most recent 50,000 samples, marks truncated responses explicitly, and returns the actual analyzed time span. Telemetry gaps longer than 60 seconds are not fully attributed to the last known sample.
 
 ## Socket.IO protocol
 
