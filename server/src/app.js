@@ -3,6 +3,8 @@ import express from "express";
 import { env } from "./config/env.js";
 import { alertsRouter } from "./routes/alerts.js";
 import { demoRouter } from "./routes/demo.js";
+import { authenticateRequest } from "./middleware/authenticate.js";
+import { authRouter } from "./routes/auth.js";
 import { fleetRouter } from "./routes/fleet.js";
 import { telemetryRouter } from "./routes/telemetry.js";
 import { trucksRouter } from "./routes/trucks.js";
@@ -23,12 +25,13 @@ export const createApp = () => {
     });
   });
 
+  app.use("/api/auth", authRouter);
   app.use("/api/telemetry", telemetryRouter);
-  app.use("/api/trucks", trucksRouter);
-  app.use("/api/fleet", fleetRouter);
-  app.use("/api/alerts", alertsRouter);
-  app.use("/api/demo", demoRouter);
-  app.use("/api/system", systemRouter);
+  app.use("/api/trucks", authenticateRequest, trucksRouter);
+  app.use("/api/fleet", authenticateRequest, fleetRouter);
+  app.use("/api/alerts", authenticateRequest, alertsRouter);
+  app.use("/api/demo", authenticateRequest, demoRouter);
+  app.use("/api/system", authenticateRequest, systemRouter);
 
   app.use((request, response) => {
     response.status(404).json({

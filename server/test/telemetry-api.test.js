@@ -4,6 +4,9 @@ import { createApp } from "../src/app.js";
 import { resetFleetState } from "../src/services/fleet-state.js";
 import { pipelineMetrics } from "../src/services/pipeline-metrics.js";
 import { createTelemetry } from "./fixtures/telemetry.js";
+import { createAccessToken } from "../src/services/auth-service.js";
+
+const withAuth = (testRequest) => testRequest.set("authorization", `Bearer ${createAccessToken()}`);
 
 describe("telemetry ingestion API", () => {
   beforeEach(() => {
@@ -16,8 +19,8 @@ describe("telemetry ingestion API", () => {
     const event = createTelemetry();
 
     const ingestion = await request(app).post("/api/telemetry").send(event);
-    const truck = await request(app).get("/api/trucks/TRK-001");
-    const summary = await request(app).get("/api/fleet/summary");
+    const truck = await withAuth(request(app).get("/api/trucks/TRK-001"));
+    const summary = await withAuth(request(app).get("/api/fleet/summary"));
 
     expect(ingestion.status).toBe(202);
     expect(truck.body.truck.latestTelemetry.eventId).toBe(event.eventId);
@@ -62,7 +65,7 @@ describe("telemetry ingestion API", () => {
     await request(app).post("/api/telemetry").send(createTelemetry());
     await request(app).post("/api/telemetry").send({ invalid: true });
 
-    const response = await request(app).get("/api/system/metrics");
+    const response = await withAuth(request(app).get("/api/system/metrics"));
     expect(response.body.metrics).toMatchObject({
       eventsReceivedTotal: 2,
       validEvents: 1,

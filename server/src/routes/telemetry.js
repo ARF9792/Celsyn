@@ -7,8 +7,18 @@ import {
 } from "../schemas/telemetry.js";
 import { ingestTelemetry } from "../services/telemetry-service.js";
 import { pipelineMetrics } from "../services/pipeline-metrics.js";
+import { getFleetSnapshots } from "../services/fleet-state.js";
 
 export const telemetryRouter = Router();
+
+telemetryRouter.get("/sequences", (_request, response) => {
+  response.json({
+    sequences: getFleetSnapshots().map((truck) => ({
+      truckId: truck.truckId,
+      sequence: truck.latestTelemetry?.sequence || 0,
+    })),
+  });
+});
 
 const rejection = (result) => ({
   accepted: false,

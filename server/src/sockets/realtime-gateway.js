@@ -5,6 +5,7 @@ import { alertEvents } from "../events/alert-events.js";
 import { telemetryEvents } from "../events/telemetry-events.js";
 import { getFleetSummary } from "../services/fleet-state.js";
 import { pipelineMetrics } from "../services/pipeline-metrics.js";
+import { publicUserFromToken, verifyAccessToken } from "../services/auth-service.js";
 
 const BROADCAST_INTERVAL_MS = 150;
 
@@ -32,6 +33,14 @@ export class RealtimeGateway {
         origin: env.clientUrl,
         credentials: true,
       },
+    });
+    this.io.use((socket, next) => {
+      try {
+        socket.user = publicUserFromToken(verifyAccessToken(socket.handshake.auth?.token));
+        next();
+      } catch {
+        next(new Error("Authentication required"));
+      }
     });
     this.broadcastIntervalMs = options.broadcastIntervalMs || BROADCAST_INTERVAL_MS;
     this.pendingByTruck = new Map();

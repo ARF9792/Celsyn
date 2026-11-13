@@ -3,9 +3,13 @@ import { io as createClient } from "socket.io-client";
 import { afterEach, describe, expect, it } from "vitest";
 import { RealtimeGateway } from "../src/sockets/realtime-gateway.js";
 import { createTelemetry } from "./fixtures/telemetry.js";
+import { createAccessToken } from "../src/services/auth-service.js";
 
 const openClient = (url) => new Promise((resolve, reject) => {
-  const client = createClient(url, { transports: ["websocket"] });
+  const client = createClient(url, {
+    transports: ["websocket"],
+    auth: { token: createAccessToken() },
+  });
   client.once("connect", () => resolve(client));
   client.once("connect_error", reject);
 });

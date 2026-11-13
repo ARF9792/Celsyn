@@ -27,12 +27,12 @@ const selectedTrucks = trucks.slice(0, truckCount);
 
 const loadInitialSequences = async () => {
   try {
-    const response = await fetch(`${backendUrl}/api/trucks`);
+    const response = await fetch(`${backendUrl}/api/telemetry/sequences`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
-    return new Map(payload.trucks.map((truck) => [
+    return new Map(payload.sequences.map((truck) => [
       truck.truckId,
-      truck.latestTelemetry?.sequence || 0,
+      truck.sequence || 0,
     ]));
   } catch (error) {
     console.warn(JSON.stringify({

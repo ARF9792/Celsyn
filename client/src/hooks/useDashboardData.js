@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { api } from "../services/api.js";
+import { api, getAccessToken } from "../services/api.js";
 import { mergeTelemetryPoints } from "../utils/telemetry.js";
 
 const mergeAlert = (alerts, alert) => {
@@ -53,7 +53,10 @@ export const useDashboardData = () => {
   }, []);
 
   useEffect(() => {
-    const socket = io(api.url, { autoConnect: true });
+    const socket = io(api.url, {
+      autoConnect: true,
+      auth: { token: getAccessToken() },
+    });
     socketRef.current = socket;
 
     const onConnect = () => {

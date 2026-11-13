@@ -9,7 +9,7 @@ import { useDashboardData } from "../hooks/useDashboardData.js";
 
 const TemperatureChart = lazy(() => import("../components/TemperatureChart.jsx"));
 
-export default function DashboardPage() {
+export default function DashboardPage({ user, onLogout }) {
   const dashboard = useDashboardData();
   return (
     <main className="dashboard-shell">
@@ -18,7 +18,11 @@ export default function DashboardPage() {
           <div className="brand-mark">CP</div>
           <div><h1>ChainPulse</h1><p>Cold-chain telemetry command center</p></div>
         </div>
-        <ConnectionBadge status={dashboard.connectionStatus} />
+        <div className="topbar-actions">
+          <span className="operator-name">{user.name}</span>
+          <ConnectionBadge status={dashboard.connectionStatus} />
+          <button className="logout-button" type="button" onClick={onLogout}>Log out</button>
+        </div>
       </header>
       {dashboard.error && <div className="error-banner">{dashboard.error}</div>}
       <KpiGrid summary={dashboard.summary} metrics={dashboard.metrics} />
