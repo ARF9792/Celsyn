@@ -23,9 +23,32 @@ const durationMs = parseNumber(args.duration, 0, { min: 0, max: 86_400_000 });
 const backendUrl = (args["backend-url"] || process.env.SIMULATOR_BACKEND_URL || "http://localhost:5000")
   .replace(/\/$/, "");
 
-const simulators = trucks
-  .slice(0, truckCount)
-  .map((truck) => createTruckSimulator(truck, { anomalyRate }));
+const selectedTrucks = trucks.slice(0, truckCount);
+
+const loadInitialSequences = async () => {
+  try {
+    const response = await fetch(`${backendUrl}/api/trucks`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    return new Map(payload.trucks.map((truck) => [
+      truck.truckId,
+      truck.latestTelemetry?.sequence || 0,
+    ]));
+  } catch (error) {
+    console.warn(JSON.stringify({
+      level: "warn",
+      message: "Could not load existing truck sequences; starting from zero",
+      error: error.message,
+    }));
+    return new Map();
+  }
+};
+
+const initialSequences = await loadInitialSequences();
+const simulators = selectedTrucks.map((truck) => createTruckSimulator(truck, {
+  anomalyRate,
+  initialSequence: initialSequences.get(truck.truckId) || 0,
+}));
 
 let generatedEvents = 0;
 let acceptedEvents = 0;

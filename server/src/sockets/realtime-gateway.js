@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import { env } from "../config/env.js";
 import { trucksById } from "../data/trucks.js";
+import { alertEvents } from "../events/alert-events.js";
 import { telemetryEvents } from "../events/telemetry-events.js";
 import { getFleetSummary } from "../services/fleet-state.js";
 
@@ -38,7 +39,9 @@ export class RealtimeGateway {
     this.latencySamples = 0;
     this.queueTelemetry = this.queueTelemetry.bind(this);
     this.handleConnection = this.handleConnection.bind(this);
+    this.emitAlert = this.emitAlert.bind(this);
     telemetryEvents.on("telemetry", this.queueTelemetry);
+    alertEvents.on("alert", this.emitAlert);
     this.io.on("connection", this.handleConnection);
     this.timer = setInterval(() => this.flush(), this.broadcastIntervalMs);
     this.timer.unref?.();
@@ -127,6 +130,7 @@ export class RealtimeGateway {
   stop() {
     clearInterval(this.timer);
     telemetryEvents.off("telemetry", this.queueTelemetry);
+    alertEvents.off("alert", this.emitAlert);
     this.io.disconnectSockets(true);
     this.io.removeAllListeners();
   }

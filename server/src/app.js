@@ -1,6 +1,8 @@
 import cors from "cors";
 import express from "express";
 import { env } from "./config/env.js";
+import { alertsRouter } from "./routes/alerts.js";
+import { demoRouter } from "./routes/demo.js";
 import { fleetRouter } from "./routes/fleet.js";
 import { telemetryRouter } from "./routes/telemetry.js";
 import { trucksRouter } from "./routes/trucks.js";
@@ -23,6 +25,8 @@ export const createApp = () => {
   app.use("/api/telemetry", telemetryRouter);
   app.use("/api/trucks", trucksRouter);
   app.use("/api/fleet", fleetRouter);
+  app.use("/api/alerts", alertsRouter);
+  app.use("/api/demo", demoRouter);
 
   app.use((request, response) => {
     response.status(404).json({

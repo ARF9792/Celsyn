@@ -27,5 +27,15 @@ describe("truck telemetry simulator", () => {
 
     expect(simulator.next().reefer.status).toBe("failed");
   });
+
+  it("continues from a previously observed sequence", () => {
+    const simulator = createTruckSimulator(trucks[0], {
+      random: () => 0.5,
+      anomalyRate: 0,
+      initialSequence: 41,
+    });
+
+    expect(simulator.next().sequence).toBe(42);
+  });
 });
 

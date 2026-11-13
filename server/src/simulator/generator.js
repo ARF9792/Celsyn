@@ -35,7 +35,7 @@ export const createTruckSimulator = (truck, options = {}) => {
   const safeMidpoint = (truck.safeTemperature.min + truck.safeTemperature.max) / 2;
 
   const state = {
-    sequence: 0,
+    sequence: options.initialSequence || 0,
     temperature: safeMidpoint,
     humidity: 64 + random() * 8,
     speed: 45 + random() * 20,
