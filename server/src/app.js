@@ -31,6 +31,15 @@ export const createApp = () => {
     });
   });
 
+  app.use((error, _request, response, _next) => {
+    console.error(JSON.stringify({
+      level: "error",
+      message: "Unhandled request error",
+      error: error.message,
+    }));
+    response.status(500).json({ error: "Internal server error" });
+  });
+
   return app;
 };
 

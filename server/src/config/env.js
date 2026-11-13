@@ -10,5 +10,7 @@ export const env = Object.freeze({
   port: parsePort(process.env.PORT),
   clientUrl: process.env.CLIENT_URL || "http://localhost:5173",
   mongoUri: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/chainpulse",
+  telemetryFlushIntervalMs: Number(process.env.TELEMETRY_FLUSH_INTERVAL_MS) || 400,
+  telemetryMaxBatchSize: Number(process.env.TELEMETRY_MAX_BATCH_SIZE) || 500,
 });
 
