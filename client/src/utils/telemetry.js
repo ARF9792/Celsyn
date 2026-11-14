@@ -21,6 +21,17 @@ export const formatTime = (timestamp) => {
   }).format(new Date(timestamp));
 };
 
+export const formatDateTime = (timestamp) => {
+  if (!timestamp) return "—";
+  return new Intl.DateTimeFormat(undefined, {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(new Date(timestamp));
+};
+
 export const formatNumber = (value, suffix = "", digits = 1) =>
   Number.isFinite(value) ? `${value.toFixed(digits)}${suffix}` : "—";
 

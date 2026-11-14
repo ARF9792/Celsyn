@@ -1,22 +1,19 @@
-const Metric = ({ label, value }) => (
-  <div className="metric-item"><span>{label}</span><strong>{value ?? 0}</strong></div>
+import { Activity, Database, Radio, Users } from "lucide-react";
+
+const Metric = ({ icon: Icon, label, value, detail }) => (
+  <article className="system-primary-metric">
+    <span className="system-metric-icon" aria-hidden="true"><Icon size={19} strokeWidth={1.8} /></span>
+    <div><span>{label}</span><strong>{value ?? 0}</strong><small>{detail}</small></div>
+  </article>
 );
 
 export default function SystemMetrics({ metrics }) {
   return (
-    <section className="panel metrics-panel">
-      <div className="panel-heading"><div><p className="section-kicker">Pipeline health</p><h2>System metrics</h2></div></div>
-      <div className="metrics-grid">
-        <Metric label="Events / sec" value={metrics?.currentEventsPerSecond} />
-        <Metric label="Connected clients" value={metrics?.connectedClients} />
-        <Metric label="Broadcast / sec" value={metrics?.broadcastMessagesPerSecond} />
-        <Metric label="Avg latency" value={`${metrics?.averageBroadcastLatencyMs ?? 0} ms`} />
-        <Metric label="Total accepted" value={metrics?.validEvents?.toLocaleString()} />
-        <Metric label="Rejected" value={metrics?.rejectedEvents?.toLocaleString()} />
-        <Metric label="Mongo buffered" value={metrics?.mongo?.bufferedEvents} />
-        <Metric label="Mongo persisted" value={metrics?.mongo?.persistedEvents?.toLocaleString()} />
-      </div>
+    <section className="system-primary-grid" aria-label="Current pipeline metrics">
+      <Metric icon={Activity} label="Accepted events" value={`${metrics?.currentEventsPerSecond ?? 0}/s`} detail={`${metrics?.validEvents?.toLocaleString() ?? 0} total`} />
+      <Metric icon={Radio} label="Broadcast calls" value={`${metrics?.broadcastMessagesPerSecond ?? 0}/s`} detail={`${metrics?.averageBroadcastLatencyMs ?? 0} ms average latency`} />
+      <Metric icon={Database} label="Persistence queue" value={metrics?.mongo?.bufferedEvents ?? 0} detail={`${metrics?.mongo?.persistedEvents?.toLocaleString() ?? 0} persisted`} />
+      <Metric icon={Users} label="Live clients" value={metrics?.connectedClients ?? 0} detail="authenticated sockets" />
     </section>
   );
 }
-

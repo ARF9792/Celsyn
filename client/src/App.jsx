@@ -7,6 +7,8 @@ import IncidentsPage from "./pages/IncidentsPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import OverviewPage from "./pages/OverviewPage.jsx";
 import SystemHealthPage from "./pages/SystemHealthPage.jsx";
+import TruckRecordPage from "./pages/TruckRecordPage.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 import { api, clearAccessToken, getAccessToken, setAccessToken } from "./services/api.js";
 
 export default function App() {
@@ -41,9 +43,11 @@ export default function App() {
           <Route index element={<Navigate to="overview" replace />} />
           <Route path="overview" element={<OverviewPage />} />
           <Route path="fleet" element={<FleetPage />} />
+          <Route path="fleet/:truckId" element={<TruckRecordPage />} />
           <Route path="incidents" element={<IncidentsPage />} />
           <Route path="compliance" element={<CompliancePage />} />
           <Route path="system" element={<SystemHealthPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/app/overview" replace />} />
       </Routes>

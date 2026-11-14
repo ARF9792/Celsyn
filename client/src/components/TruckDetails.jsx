@@ -1,4 +1,5 @@
 import { ArrowUpRight, LocateFixed, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 import { formatNumber, formatTime } from "../utils/telemetry.js";
 
 const Detail = ({ label, value, wide = false }) => (
@@ -35,9 +36,9 @@ export default function TruckDetails({ truck, onTrigger, demoPending, onLocate }
         <button className="icon-text-button truck-locate-button" type="button" onClick={onLocate}>
           <LocateFixed size={16} aria-hidden="true" />Locate on map
         </button>
-        <button className="future-truck-link" type="button" disabled title="Dedicated truck details will be added in the next screen pass">
+        <Link className="future-truck-link" to={`/app/fleet/${truck.truckId}`}>
           <MapPin size={16} aria-hidden="true" />Open full record<ArrowUpRight size={14} aria-hidden="true" />
-        </button>
+        </Link>
       </div>
       <button className="demo-button" type="button" onClick={onTrigger} disabled={demoPending}>
         {demoPending ? "Activating…" : "Trigger temperature excursion"}

@@ -31,8 +31,8 @@ export const api = {
   getTrucks: () => request("/api/trucks"),
   getFleetSummary: () => request("/api/fleet/summary"),
   getTruckHistory: (truckId) => request(`/api/trucks/${truckId}/history?minutes=30&limit=300`),
-  getTruckCompliance: (truckId) => request(`/api/trucks/${truckId}/compliance?minutes=60`),
-  getAlerts: () => request("/api/alerts?limit=30"),
+  getTruckCompliance: (truckId, minutes = 60) => request(`/api/trucks/${truckId}/compliance?minutes=${minutes}`),
+  getAlerts: () => request("/api/alerts?limit=100"),
   getMetrics: () => request("/api/system/metrics"),
   triggerExcursion: (truckId) => request(
     `/api/demo/trucks/${truckId}/temperature-excursion`,

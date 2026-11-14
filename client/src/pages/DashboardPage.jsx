@@ -25,6 +25,7 @@ const navigation = [
 const titles = {
   overview: ["Fleet safety", "Live operating state across the refrigerated fleet."],
   fleet: ["Live fleet", "Vehicles, telemetry and selected asset details."],
+  truck: ["Truck record", "Live safety state, telemetry history and compliance."],
   incidents: ["Incident center", "Warning and critical cold-chain events."],
   compliance: ["Compliance", "Temperature adherence and excursion history."],
   system: ["System health", "Ingestion, broadcast and persistence performance."],
@@ -34,7 +35,9 @@ export default function DashboardPage({ user, onLogout }) {
   const dashboard = useDashboardData();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const section = location.pathname.split("/").at(-1);
+  const section = location.pathname.startsWith("/app/fleet/")
+    ? "truck"
+    : location.pathname.split("/").at(-1);
   const [title, description] = titles[section] || titles.overview;
 
   return (

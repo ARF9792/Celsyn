@@ -5,7 +5,7 @@ import { mergeTelemetryPoints } from "../utils/telemetry.js";
 
 const mergeAlert = (alerts, alert) => {
   if (alerts.some((existing) => existing.alertId === alert.alertId)) return alerts;
-  return [alert, ...alerts].slice(0, 30);
+  return [alert, ...alerts].slice(0, 100);
 };
 
 export const useDashboardData = () => {
