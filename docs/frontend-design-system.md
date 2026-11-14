@@ -1,32 +1,33 @@
-# ChainPulse frontend design system
+# Celsyn frontend design system
 
 ## Direction
 
-ChainPulse uses a **refrigeration control-room** visual direction: bright operational surfaces, graphite structure, cobalt navigation and action, and semantic safety colours reserved for fleet state. The interface is designed for quick scanning during an active monitoring shift rather than for decorative presentation.
+Celsyn uses a **precision control-room** visual direction derived from the supplied Origyn product reference: near-black canvas, charcoal operational surfaces, fine neutral borders, compact typography, and restrained status colour reserved for fleet state. The interface is designed for quick scanning during an active monitoring shift rather than for decorative presentation.
 
-The direction was dealt with Taste Skill 2.5.1 using its `software` / `saas` route:
+The existing application structure remains unchanged while the shared visual system follows these rules:
 
-- Palette: `white-link-blue` — white ground, neutral surface and cobalt action.
-- Type pairing: Instrument Sans with DM Mono for telemetry values.
-- Radius: soft — 8px controls, 12px panels and 20px primary operational surfaces.
+- Palette: graphite-black canvas, charcoal surfaces, neutral text and a muted steel-blue selection accent.
+- Type pairing: Manrope for display headings, Inter for interface text and JetBrains Mono for telemetry values.
+- Radius: compact — 6px controls and 9px operational panels.
+- Surfaces: flat and precise, without gradients, glow, glassmorphism, purple or neon treatments.
 
 ## Tokens
 
 Shared tokens live in `client/src/styles/tokens.css`.
 
-- Typography: Instrument Sans for interface text; DM Mono for IDs, measurements and timestamps.
-- Canvas: `#f5f6f8`; surfaces: white and `#f0f2f5`; primary ink: `#111318`.
-- Action: cobalt `#1a4be0`.
+- Typography: Manrope for display headings; Inter for interface text; JetBrains Mono for IDs, measurements and timestamps.
+- Canvas: `#0b0c0d`; surfaces: `#111214` and `#17181a`; primary ink: `#ededee`.
+- Action: neutral light `#e8e8eb`; selection and focus: muted steel-blue `#859cd0`.
 - Healthy: green; warning: amber; critical: red; offline: neutral grey.
 - Spacing: 4, 8, 12, 16, 24, 32, 48 and 64px.
-- Motion: 120–180ms interface transitions with one restrained live-connection pulse. Reduced-motion preferences stop non-essential motion.
+- Motion: 120–180ms interface transitions. Live state is communicated without glow or distracting animation.
 
 Semantic colours must not be used decoratively. Red always means critical, amber always means operator review, and green always means within limits or connected.
 
 ## Shared application shell
 
-- A graphite desktop sidebar keeps product navigation visually separate from operational data.
-- The active route uses a cobalt indicator and a single Lucide icon family.
+- A charcoal desktop sidebar keeps product navigation visually separate from operational data.
+- The active route uses a muted steel-blue indicator, a raised neutral surface and a single Lucide icon family.
 - The top bar provides route context and the actual Socket.IO connection state.
 - At tablet and phone widths the sidebar becomes an accessible drawer with `aria-expanded`, a backdrop and 44px controls.
 - A keyboard skip link targets the dashboard content.
@@ -35,11 +36,11 @@ Semantic colours must not be used decoratively. Red always means critical, amber
 
 ### Operational panels
 
-Panels use one white surface, one neutral border and no gradient. Nested content uses the subtle surface token rather than another bordered card. Panel headings use a sentence-case context line, a direct noun heading and at most one action.
+Panels use one charcoal surface, one fine neutral border and no gradient. Nested content uses the raised surface token rather than another bordered card. Panel headings use a sentence-case context line, a direct noun heading and at most one action.
 
 ### Metrics
 
-Metrics combine a restrained icon, a live value and its unit or meaning. Telemetry values use DM Mono. Safety counts do not share equal visual weight with throughput metrics: the fleet-posture component owns the primary hierarchy.
+Metrics combine a restrained icon, a live value and its unit or meaning. Telemetry values use JetBrains Mono. Safety counts do not share equal visual weight with throughput metrics: the fleet-posture component owns the primary hierarchy.
 
 ### Status
 
@@ -47,7 +48,7 @@ Status pills use both text and colour. Fleet distribution repeats the same seman
 
 ### Tables
 
-Rows are 48px high, keyboard selectable and retain a visible focus state. IDs and timestamps use DM Mono. Overview queues are sorted critical, warning, offline and healthy; the complete Fleet route remains the source for all vehicles.
+Rows are 48px high, keyboard selectable and retain a visible focus state. IDs and timestamps use JetBrains Mono. Overview queues are sorted critical, warning, offline and healthy; the complete Fleet route remains the source for all vehicles.
 
 ### Incidents
 
@@ -103,7 +104,7 @@ System health presents the real ingestion-to-client path: accepted rate, broadca
 
 ### Authentication and route states
 
-The sign-in page uses the same graphite, cobalt and operational typography system while retaining the existing JWT flow and demo credentials. The application also includes a shell-consistent not-found state for unknown authenticated routes.
+The sign-in page uses the same graphite, neutral and operational typography system while retaining the existing JWT flow and demo credentials. The application also includes a shell-consistent not-found state for unknown authenticated routes.
 
 ## Remaining frontend scope
 

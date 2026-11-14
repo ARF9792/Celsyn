@@ -121,7 +121,7 @@ export default function IncidentsPage() {
                 <Link className="text-action" to={`/app/fleet/${selectedAlert.truckId}`} onClick={() => dashboard.selectTruck(selectedAlert.truckId)}>Open truck record<ArrowRight size={16} /></Link>
                 <Link className="icon-text-button" to="/app/fleet" onClick={() => dashboard.selectTruck(selectedAlert.truckId)}>Locate in fleet</Link>
               </div>
-              <p className="incident-limit">ChainPulse currently records detection events. Acknowledgement and resolution states are not stored by the backend.</p>
+              <p className="incident-limit">Celsyn currently records detection events. Acknowledgement and resolution states are not stored by the backend.</p>
             </>
           )}
         </aside>

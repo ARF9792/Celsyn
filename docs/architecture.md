@@ -1,4 +1,4 @@
-# ChainPulse architecture notes
+# Celsyn architecture notes
 
 ## Telemetry event contract
 

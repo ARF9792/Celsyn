@@ -4,6 +4,7 @@ import DashboardPage from "./pages/DashboardPage.jsx";
 import CompliancePage from "./pages/CompliancePage.jsx";
 import FleetPage from "./pages/FleetPage.jsx";
 import IncidentsPage from "./pages/IncidentsPage.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import OverviewPage from "./pages/OverviewPage.jsx";
 import SystemHealthPage from "./pages/SystemHealthPage.jsx";
@@ -34,12 +35,26 @@ export default function App() {
     setUser(null);
   };
 
-  if (checkingSession) return <div className="session-loading">Restoring ChainPulse session…</div>;
-  if (!user) return <LoginPage onLogin={login} />;
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/app" element={<DashboardPage user={user} onLogout={logout} />}>
+        <Route path="/" element={<LandingPage authenticated={Boolean(user)} />} />
+        <Route
+          path="/login"
+          element={checkingSession
+            ? <div className="session-loading">Restoring Celsyn session…</div>
+            : user
+              ? <Navigate to="/app/overview" replace />
+              : <LoginPage onLogin={login} />}
+        />
+        <Route
+          path="/app"
+          element={checkingSession
+            ? <div className="session-loading">Restoring Celsyn session…</div>
+            : user
+              ? <DashboardPage user={user} onLogout={logout} />
+              : <Navigate to="/login" replace />}
+        >
           <Route index element={<Navigate to="overview" replace />} />
           <Route path="overview" element={<OverviewPage />} />
           <Route path="fleet" element={<FleetPage />} />
@@ -49,7 +64,7 @@ export default function App() {
           <Route path="system" element={<SystemHealthPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
-        <Route path="*" element={<Navigate to="/app/overview" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

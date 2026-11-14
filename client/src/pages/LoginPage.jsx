@@ -1,5 +1,6 @@
-import { Activity, MapPinned, Snowflake, Thermometer } from "lucide-react";
+import { Activity, MapPinned, Thermometer } from "lucide-react";
 import { useState } from "react";
+import BrandLogo from "../components/BrandLogo.jsx";
 
 export default function LoginPage({ onLogin }) {
   const [email, setEmail] = useState("demo@chainpulse.dev");
@@ -24,11 +25,11 @@ export default function LoginPage({ onLogin }) {
     <main className="login-shell">
       <div className="login-layout" data-enter>
         <section className="login-brand-panel">
-          <div className="login-brand"><span className="brand-mark"><Snowflake size={19} /></span><div><strong>ChainPulse</strong><span>Cold-chain operations</span></div></div>
+          <div className="login-brand"><BrandLogo className="login-logo" /><div><strong>Celsyn</strong><span>Cold-chain operations</span></div></div>
           <div className="login-brand-copy">
             <p className="section-kicker">Fleet monitoring for operators</p>
             <h1>See which refrigerated truck needs attention now.</h1>
-            <p>ChainPulse tracks live temperature, location and refrigeration state across 25 simulated trucks.</p>
+            <p>Celsyn tracks live temperature, location and refrigeration state across 25 simulated trucks.</p>
           </div>
           <div className="login-capabilities" aria-label="Platform capabilities">
             <span><MapPinned size={17} />Live fleet positions</span>
@@ -38,7 +39,7 @@ export default function LoginPage({ onLogin }) {
         </section>
         <section className="login-card">
           <p className="section-kicker">Demo operator access</p>
-          <h2>Sign in to ChainPulse</h2>
+          <h2>Sign in to Celsyn</h2>
           <p className="login-copy">The seeded account is already entered for the hackathon demonstration.</p>
           {error && <div className="error-banner" role="alert">{error}</div>}
           <form onSubmit={submit}>

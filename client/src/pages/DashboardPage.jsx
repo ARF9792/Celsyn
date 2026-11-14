@@ -5,13 +5,13 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  Snowflake,
   TriangleAlert,
   Truck,
   X,
 } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import ConnectionBadge from "../components/ConnectionBadge.jsx";
+import BrandLogo from "../components/BrandLogo.jsx";
 import { useDashboardData } from "../hooks/useDashboardData.js";
 
 const navigation = [
@@ -46,8 +46,8 @@ export default function DashboardPage({ user, onLogout }) {
 
       <aside id="primary-navigation" className={`app-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
         <div className="sidebar-brand">
-          <div className="brand-mark" aria-hidden="true"><Snowflake size={18} strokeWidth={2.2} /></div>
-          <div><strong>ChainPulse</strong><span>Cold-chain operations</span></div>
+          <BrandLogo className="sidebar-logo" />
+          <div><strong>Celsyn</strong><span>Cold-chain operations</span></div>
           <button className="sidebar-close" type="button" onClick={() => setSidebarOpen(false)} aria-label="Close navigation">
             <X size={20} />
           </button>
@@ -74,7 +74,7 @@ export default function DashboardPage({ user, onLogout }) {
         <div className="sidebar-footer">
           <div className="operator-avatar" aria-hidden="true">{user.name.slice(0, 1)}</div>
           <div className="operator-copy"><strong>{user.name}</strong><span>{user.role}</span></div>
-          <button className="sidebar-logout" type="button" onClick={onLogout} aria-label="Log out of ChainPulse">
+          <button className="sidebar-logout" type="button" onClick={onLogout} aria-label="Log out of Celsyn">
             <LogOut size={17} aria-hidden="true" />
           </button>
         </div>

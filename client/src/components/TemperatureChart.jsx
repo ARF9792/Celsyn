@@ -34,13 +34,13 @@ export default function TemperatureChart({ truck, series, loading }) {
         <div className="chart-container">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 12, right: 14, left: 2, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 4" stroke="#dfe3e8" vertical={false} />
+              <CartesianGrid strokeDasharray="3 4" stroke="var(--chart-grid)" vertical={false} />
               <XAxis
                 dataKey="timeLabel"
                 minTickGap={44}
-                axisLine={{ stroke: "#cbd1d8" }}
+                axisLine={{ stroke: "var(--color-line-strong)" }}
                 tickLine={false}
-                tick={{ fill: "#656d78", fontSize: 11 }}
+                tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
               />
               <YAxis
                 width={54}
@@ -49,23 +49,23 @@ export default function TemperatureChart({ truck, series, loading }) {
                 tickFormatter={(value) => `${Number(value).toFixed(1)}°`}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#656d78", fontSize: 11 }}
+                tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
               />
               <Tooltip
                 formatter={(value) => [`${Number(value).toFixed(1)} °C`, "Temperature"]}
-                contentStyle={{ background: "#ffffff", border: "1px solid #cbd1d8", borderRadius: 10, boxShadow: "0 10px 24px rgba(17, 19, 24, .12)" }}
-                labelStyle={{ color: "#5d6570", marginBottom: 4 }}
-                itemStyle={{ color: "#111318" }}
+                contentStyle={{ background: "var(--color-surface)", border: "1px solid var(--color-line-strong)", borderRadius: 10, boxShadow: "var(--shadow-raised)" }}
+                labelStyle={{ color: "var(--color-muted)", marginBottom: 4 }}
+                itemStyle={{ color: "var(--color-ink)" }}
               />
-              <ReferenceArea y1={safeMinimum} y2={safeMaximum} fill="#0d7650" fillOpacity={0.08} />
+              <ReferenceArea y1={safeMinimum} y2={safeMaximum} fill="var(--chart-safe-band)" fillOpacity={1} />
               <Line
                 type="monotone"
                 dataKey="temperature"
                 name="Temperature"
-                stroke="#1a4be0"
+                stroke="var(--chart-primary)"
                 strokeWidth={2.25}
                 dot={false}
-                activeDot={{ r: 4, fill: "#1a4be0", stroke: "#ffffff", strokeWidth: 2 }}
+                activeDot={{ r: 4, fill: "var(--chart-primary)", stroke: "var(--color-surface)", strokeWidth: 2 }}
                 isAnimationActive={false}
               />
             </LineChart>

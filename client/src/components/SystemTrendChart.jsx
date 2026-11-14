@@ -16,13 +16,17 @@ export default function SystemTrendChart({ history }) {
         <div className="system-trend-chart">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 10, right: 14, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 4" stroke="#dfe3e8" vertical={false} />
-              <XAxis dataKey="label" minTickGap={48} tickLine={false} axisLine={{ stroke: "#cbd1d8" }} tick={{ fill: "#656d78", fontSize: 11 }} />
-              <YAxis yAxisId="events" width={44} tickLine={false} axisLine={false} tick={{ fill: "#656d78", fontSize: 11 }} />
-              <YAxis yAxisId="latency" orientation="right" width={54} tickFormatter={(value) => `${value}ms`} tickLine={false} axisLine={false} tick={{ fill: "#656d78", fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: "#fff", border: "1px solid #cbd1d8", borderRadius: 10 }} />
-              <Line yAxisId="events" type="monotone" dataKey="events" name="Events / sec" stroke="#1a4be0" strokeWidth={2.25} dot={false} isAnimationActive={false} />
-              <Line yAxisId="latency" type="monotone" dataKey="latency" name="Latency (ms)" stroke="#925500" strokeWidth={2} dot={false} isAnimationActive={false} />
+              <CartesianGrid strokeDasharray="3 4" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis dataKey="label" minTickGap={48} tickLine={false} axisLine={{ stroke: "var(--color-line-strong)" }} tick={{ fill: "var(--chart-axis)", fontSize: 11 }} />
+              <YAxis yAxisId="events" width={44} tickLine={false} axisLine={false} tick={{ fill: "var(--chart-axis)", fontSize: 11 }} />
+              <YAxis yAxisId="latency" orientation="right" width={54} tickFormatter={(value) => `${value}ms`} tickLine={false} axisLine={false} tick={{ fill: "var(--chart-axis)", fontSize: 11 }} />
+              <Tooltip
+                contentStyle={{ background: "var(--color-surface)", border: "1px solid var(--color-line-strong)", borderRadius: 8 }}
+                labelStyle={{ color: "var(--color-muted)", marginBottom: 4 }}
+                itemStyle={{ color: "var(--color-ink)" }}
+              />
+              <Line yAxisId="events" type="monotone" dataKey="events" name="Events / sec" stroke="var(--chart-primary)" strokeWidth={2.25} dot={false} isAnimationActive={false} />
+              <Line yAxisId="latency" type="monotone" dataKey="latency" name="Latency (ms)" stroke="var(--chart-tertiary)" strokeWidth={2} strokeDasharray="5 4" dot={false} isAnimationActive={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>

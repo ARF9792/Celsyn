@@ -1,10 +1,10 @@
-# ChainPulse
+# Celsyn
 
-ChainPulse is a real-time cold-chain fleet telemetry monitoring platform built for the MERNIFY Hackathon. It simulates refrigerated trucks, validates and processes high-frequency telemetry, stores historical events in MongoDB, detects deterministic cold-chain incidents, and streams selective updates to an authenticated React dashboard with Socket.IO.
+Celsyn is a real-time cold-chain fleet telemetry monitoring platform built for the MERNIFY Hackathon. It simulates refrigerated trucks, validates and processes high-frequency telemetry, stores historical events in MongoDB, detects deterministic cold-chain incidents, and streams selective updates to an authenticated React dashboard with Socket.IO.
 
 ## Problem being solved
 
-Temperature-sensitive cargo can be damaged before an operations team realizes that a refrigeration unit has failed, a cargo door is open, or a vehicle has left its safe operating range. ChainPulse gives operators one live view of fleet health, individual truck telemetry, historical temperature trends, incident alerts, and the performance of the telemetry pipeline itself.
+Temperature-sensitive cargo can be damaged before an operations team realizes that a refrigeration unit has failed, a cargo door is open, or a vehicle has left its safe operating range. Celsyn gives operators one live view of fleet health, individual truck telemetry, historical temperature trends, incident alerts, and the performance of the telemetry pipeline itself.
 
 ## Current feature set
 
@@ -287,5 +287,5 @@ The backend suite covers health, validation, ingestion, stale sequences, fleet s
 
 ## Attribution
 
-ChainPulse uses open-source packages listed in `package.json`, including React, Vite, Leaflet, Express, MongoDB/Mongoose, Socket.IO, Zod, Recharts, JSON Web Token, Vitest, and Supertest. The default map tiles are © OpenStreetMap contributors, with attribution displayed in the map.
+Celsyn uses open-source packages listed in `package.json`, including React, Vite, Leaflet, Express, MongoDB/Mongoose, Socket.IO, Zod, Recharts, JSON Web Token, Vitest, and Supertest. The default map tiles are © OpenStreetMap contributors, with attribution displayed in the map.
 
