@@ -52,11 +52,11 @@ Temperature-sensitive cargo can be damaged before an operations team realizes th
 
 ## Architecture
 
-![Celsyn system architecture](docs/architecture-system.svg)
+![Celsyn hand-drawn system architecture](docs/architecture-handdrawn.svg)
 
 The backend can ingest many events between visual updates. The broadcast scheduler retains only the newest changed state for each truck, while every accepted event is still queued for MongoDB persistence.
 
-The [detailed architecture plan](docs/architecture.md) covers component ownership, data contracts, ingestion and delivery sequences, Socket.IO rooms, frontend routing, security boundaries, performance controls, failure behavior, deployment, and a realistic scale-out path. It also includes a [hand-drawn whiteboard version](docs/architecture-handdrawn.svg) for presentations.
+The [detailed architecture plan](docs/architecture.md) covers component ownership, data contracts, ingestion and delivery sequences, Socket.IO rooms, frontend routing, security boundaries, performance controls, failure behavior, deployment, and a realistic scale-out path.
 
 ## Technology stack
 

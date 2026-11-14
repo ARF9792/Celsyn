@@ -4,17 +4,9 @@ Celsyn is a real-time cold-chain operations platform. It accepts high-frequency 
 
 The hackathon demonstration loads 25 simulated refrigerated vehicles. That is a demo dataset choice, not a frontend capacity constant: fleet records, status counts, filtering, map markers, subscriptions, and tables are derived from the backend response.
 
-## Architecture diagrams
+## Architecture diagram
 
-### Engineering view
-
-![Celsyn system architecture](architecture-system.svg)
-
-### Hand-drawn presentation view
-
-This is an intentionally hand-drawn whiteboard rendering of the same architecture. It is useful in a demo or presentation, while the engineering view remains the precise reference.
-
-![Celsyn architecture whiteboard sketch](architecture-handdrawn.svg)
+![Celsyn hand-drawn system architecture](architecture-handdrawn.svg)
 
 ## System context
 
