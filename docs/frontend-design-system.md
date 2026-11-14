@@ -81,8 +81,30 @@ The Live Fleet screen treats geography as the primary operational surface and ke
 4. The directory remains the complete scannable fleet record and highlights the selected row.
 5. The historical + live chart uses a numeric Celsius axis and a quiet safe-range band.
 
-On desktop, the selected asset sits beside the map. Tablet and phone layouts stack the same sequence without changing the selection model. The future truck-details action is intentionally disabled until its dedicated route is implemented.
+On desktop, the selected asset sits beside the map. Tablet and phone layouts stack the same sequence without changing the selection model. The selected asset links directly to its dedicated truck record.
 
-## Future screens
+## Operational detail screens
 
-The shared tokens and shell are ready for later screen-specific work. Truck details should emphasize safe range and history; incidents should emphasize triage; compliance should emphasize time in range; system health should emphasize ingestion-to-persistence flow. Their current structure remains intentionally unchanged until each receives its own redesign pass.
+### Truck record
+
+The route `/app/fleet/:truckId` preserves the current live selection while adding a durable record view. The asset identity, status and route lead the page; eight current measurements follow; then actual stored/live temperature history, 60-minute compliance and truck-specific detection events provide operational context. Unknown truck IDs receive a bounded empty state instead of breaking the shell.
+
+### Incident center
+
+The incident center is a triage workspace rather than a static alert feed. It keeps the most recent 100 real detection events, supports text, severity, type and truck filters, and synchronizes a selectable queue with a detailed event panel. Actions lead to the associated truck record or locate the vehicle in Live Fleet. The interface explicitly states that acknowledgement and resolution are not stored, rather than inventing unsupported workflow states.
+
+### Compliance
+
+Compliance uses stored telemetry from the existing API. Operators can select any truck and a 60-minute, 6-hour or 24-hour window. The page shows the actual analyzed interval, time in range, excursion duration and count, temperature extrema, sample gaps and the newest excursions. Truncation and empty responses remain visible.
+
+### System health
+
+System health presents the real ingestion-to-client path: accepted rate, broadcast activity and latency, persistence queue, connected clients, cumulative processing counters and a rolling one-minute browser view of incoming system metrics. Health wording is derived only from rejection, drop and queue signals already exposed by the backend.
+
+### Authentication and route states
+
+The sign-in page uses the same graphite, cobalt and operational typography system while retaining the existing JWT flow and demo credentials. The application also includes a shell-consistent not-found state for unknown authenticated routes.
+
+## Remaining frontend scope
+
+The marketing landing page is intentionally excluded. All authenticated navigation destinations now have a dedicated, responsive operational experience; future work should focus on usability findings and demo rehearsal rather than adding unsupported product scope.

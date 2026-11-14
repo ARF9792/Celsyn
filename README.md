@@ -23,6 +23,10 @@ Temperature-sensitive cargo can be damaged before an operations team realizes th
 - Reproducible configurable stress-test workflow
 - Responsive React dashboard with historical + live Recharts visualization
 - Interactive live fleet map with status markers, synchronized selection, and operational filtering
+- Dedicated truck records with live telemetry, stored history, compliance, and truck-specific incidents
+- Searchable incident triage with synchronized truck and fleet navigation
+- Stored-telemetry compliance analysis across 60-minute, 6-hour, and 24-hour windows
+- Live telemetry pipeline visualization with throughput, latency, persistence, and delivery counters
 
 ## Architecture
 
@@ -61,8 +65,9 @@ See [docs/architecture.md](docs/architecture.md) for the data contracts, Socket.
 
 ```text
 client/               React/Vite dashboard
-  src/components/     Dashboard panels and chart
+  src/components/     Shared dashboard panels, map, and charts
   src/hooks/          REST + Socket.IO state orchestration
+  src/pages/          Overview and operational application screens
   src/services/       Authenticated API client
 server/
   scripts/            Simulator and stress-test CLIs
