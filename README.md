@@ -22,6 +22,7 @@ Temperature-sensitive cargo can be damaged before an operations team realizes th
 - JWT-protected dashboard APIs and Socket.IO connections
 - Reproducible configurable stress-test workflow
 - Responsive React dashboard with historical + live Recharts visualization
+- Interactive live fleet map with status markers, synchronized selection, and operational filtering
 
 ## Architecture
 
@@ -50,7 +51,7 @@ See [docs/architecture.md](docs/architecture.md) for the data contracts, Socket.
 
 | Layer | Technology |
 | --- | --- |
-| Frontend | React 19, Vite 8, Socket.IO Client, Recharts 3 |
+| Frontend | React 19, Vite 8, Socket.IO Client, Recharts 3, Leaflet 1.9 |
 | Backend | Node.js, Express 5, Socket.IO, Zod |
 | Database | MongoDB, Mongoose |
 | Security | JWT, rate limiting, strict request validation |
@@ -113,9 +114,14 @@ Client:
 
 ```dotenv
 VITE_API_URL=http://localhost:5000
+# Optional map-provider overrides. Keep provider attribution visible.
+VITE_MAP_TILE_URL=https://tile.openstreetmap.org/{z}/{x}/{y}.png
+VITE_MAP_ATTRIBUTION=&copy; OpenStreetMap contributors
 ```
 
 Never commit `.env` files or credentials. The repository tracks only `.env.example` templates.
+
+The Live Fleet map uses Leaflet and defaults to the standard OpenStreetMap raster tile endpoint without an API key. This is suitable for a modest local hackathon demo. For a public or higher-traffic deployment, configure a production tile provider or self-hosted tiles with the two optional client variables above, follow that provider's usage policy, and retain the required attribution.
 
 ## Run the complete local demo
 
@@ -194,7 +200,7 @@ Client events:
 
 Server events:
 
-- `fleet:update` - compact changed-truck states plus fleet summary
+- `fleet:update` - compact changed-truck states (including current location) plus fleet summary
 - `truck:update` - full latest telemetry only for the selected truck room
 - `alert:new` - newly detected incident
 - `system:metrics` - actual pipeline measurements once per second
@@ -272,9 +278,9 @@ The backend suite covers health, validation, ingestion, stale sequences, fleet s
 - Recent alert retrieval is session-backed for dashboard simplicity, though new alerts are also persisted to MongoDB.
 - Demo incidents are stored in memory and reset when the API restarts.
 - Deployment configuration, TLS termination, and production secret management remain environment-specific.
-- The current phase intentionally omits the final visual redesign, map, landing page, and advanced role management.
+- The landing page, dedicated truck-details route, and advanced role management remain future work.
 
 ## Attribution
 
-ChainPulse uses open-source packages listed in `package.json`, including React, Vite, Express, MongoDB/Mongoose, Socket.IO, Zod, Recharts, JSON Web Token, Vitest, and Supertest.
+ChainPulse uses open-source packages listed in `package.json`, including React, Vite, Leaflet, Express, MongoDB/Mongoose, Socket.IO, Zod, Recharts, JSON Web Token, Vitest, and Supertest. The default map tiles are © OpenStreetMap contributors, with attribution displayed in the map.
 

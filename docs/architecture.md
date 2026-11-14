@@ -45,11 +45,13 @@ An incident key combines truck and alert type. An ongoing condition emits once a
 
 | Room | Payload |
 | --- | --- |
-| `fleet` | Fleet summary and compact states for changed trucks |
+| `fleet` | Fleet summary and compact states, including current location, for changed trucks |
 | `truck:<truckId>` | Full latest event for that truck |
 | `alerts` | Newly detected alert |
 
 Truck subscriptions validate the ID against the registered fleet. JWT authentication occurs during the Socket.IO handshake.
+
+The Live Fleet map initializes its marker set from the authenticated fleet snapshot, then updates marker coordinates in place from compact `fleet:update` messages. Map, table, and detail-panel selection share one selected truck ID; filtering changes marker visibility without replacing the live fleet state.
 
 ## Metrics
 

@@ -71,6 +71,18 @@ The Overview answers: **Is the refrigerated fleet operating safely right now, an
 
 No static business claims or mock telemetry are introduced. Every value continues to come from the existing REST and Socket.IO data flow.
 
+## Live Fleet information hierarchy
+
+The Live Fleet screen treats geography as the primary operational surface and keeps one synchronized vehicle selection across the map, directory, and telemetry panel.
+
+1. Search and status controls narrow the current live fleet without replacing or freezing incoming telemetry.
+2. The map displays backend coordinates, status-coloured markers, navigation controls, visible-provider attribution, and explicit loading, empty, and error states.
+3. The selected-asset panel presents the cargo-safe range beside current temperature, then humidity, speed, fuel, door, reefer, position, and update time.
+4. The directory remains the complete scannable fleet record and highlights the selected row.
+5. The historical + live chart uses a numeric Celsius axis and a quiet safe-range band.
+
+On desktop, the selected asset sits beside the map. Tablet and phone layouts stack the same sequence without changing the selection model. The future truck-details action is intentionally disabled until its dedicated route is implemented.
+
 ## Future screens
 
-The shared tokens and shell are ready for later screen-specific work. Fleet should emphasize geography and vehicle selection; truck details should emphasize safe range and history; incidents should emphasize triage; compliance should emphasize time in range; system health should emphasize ingestion-to-persistence flow. Their current structure remains intentionally unchanged until each receives its own redesign pass.
+The shared tokens and shell are ready for later screen-specific work. Truck details should emphasize safe range and history; incidents should emphasize triage; compliance should emphasize time in range; system health should emphasize ingestion-to-persistence flow. Their current structure remains intentionally unchanged until each receives its own redesign pass.
