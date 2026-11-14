@@ -6,7 +6,7 @@ import { startTemperatureExcursion } from "../services/demo-scenarios.js";
 export const demoRouter = Router();
 
 demoRouter.use((_request, response, next) => {
-  if (env.nodeEnv === "production") {
+  if (env.nodeEnv === "production" && !env.enableDemoScenarios) {
     return response.status(404).json({ error: "Not found" });
   }
   return next();

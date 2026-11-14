@@ -15,5 +15,6 @@ export const env = Object.freeze({
   jwtSecret: process.env.JWT_SECRET || "development-only-change-me",
   demoUserEmail: process.env.DEMO_USER_EMAIL || "demo@chainpulse.dev",
   demoUserPassword: process.env.DEMO_USER_PASSWORD || "chainpulse-demo",
+  enableDemoScenarios: process.env.ENABLE_DEMO_SCENARIOS === "true",
 });
 

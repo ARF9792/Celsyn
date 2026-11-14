@@ -1,0 +1,229 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Celsyn hackathon backend on EC2 with CloudFront HTTPS and a monthly budget alert.
+
+Parameters:
+  NotificationEmail:
+    Type: String
+    Description: Email address that receives AWS budget notifications.
+  RepositoryUrl:
+    Type: String
+    Default: https://github.com/ARF9792/Celsyn.git
+  RepositoryBranch:
+    Type: String
+    Default: main
+  InstanceType:
+    Type: String
+    Default: t3.micro
+    AllowedValues: [t3.micro, t3.small]
+  MonthlyBudgetUsd:
+    Type: Number
+    Default: 10
+
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.40.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags: [{ Key: Name, Value: celsyn-vpc }]
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref Vpc
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.40.1.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      Tags: [{ Key: Name, Value: celsyn-public }]
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+
+  DefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: GatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  ApiSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Public HTTP origin for the Celsyn CloudFront distribution
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ec2.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: ReadCelsynRuntimeParameters
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [ssm:GetParameter, ssm:GetParameters]
+                Resource: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/celsyn/prod/*
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: [!Ref InstanceRole]
+
+  ApiInstance:
+    Type: AWS::EC2::Instance
+    DependsOn: DefaultRoute
+    Properties:
+      ImageId: !Sub "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}"
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: { Name: !Ref InstanceProfile }
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds: [!Ref ApiSecurityGroup]
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 16
+            VolumeType: gp3
+            Encrypted: true
+      Tags: [{ Key: Name, Value: celsyn-api }]
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -euo pipefail
+          dnf install -y docker git jq
+          systemctl enable --now docker
+          mkdir -p /usr/local/lib/docker/cli-plugins /opt/celsyn
+          curl -fsSL https://github.com/docker/compose/releases/download/v2.30.3/docker-compose-linux-x86_64 \
+            -o /usr/local/lib/docker/cli-plugins/docker-compose
+          chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+          git clone --branch '${RepositoryBranch}' --depth 1 '${RepositoryUrl}' /opt/celsyn/app
+
+          get_parameter() {
+            aws ssm get-parameter --region '${AWS::Region}' --name "$1" --with-decryption \
+              --query Parameter.Value --output text
+          }
+
+          umask 077
+          mongo_uri="$(get_parameter /celsyn/prod/mongodb-uri)"
+          jwt_secret="$(get_parameter /celsyn/prod/jwt-secret)"
+          demo_email="$(get_parameter /celsyn/prod/demo-email)"
+          demo_password="$(get_parameter /celsyn/prod/demo-password)"
+          client_url="$(get_parameter /celsyn/prod/client-url)"
+          {
+            printf 'MONGODB_URI=%s\n' "$mongo_uri"
+            printf 'JWT_SECRET=%s\n' "$jwt_secret"
+            printf 'DEMO_USER_EMAIL=%s\n' "$demo_email"
+            printf 'DEMO_USER_PASSWORD=%s\n' "$demo_password"
+            printf 'CLIENT_URL=%s\n' "$client_url"
+            printf 'TELEMETRY_FLUSH_INTERVAL_MS=400\n'
+            printf 'TELEMETRY_MAX_BATCH_SIZE=500\n'
+            printf 'ENABLE_DEMO_SCENARIOS=true\n'
+          } > /opt/celsyn/runtime.env
+          unset mongo_uri jwt_secret demo_email demo_password client_url
+          cd /opt/celsyn/app/deploy/aws
+          docker compose up -d --build
+
+  ElasticIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags: [{ Key: Name, Value: celsyn-api }]
+
+  ElasticIpAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref ApiInstance
+      AllocationId: !GetAtt ElasticIp.AllocationId
+
+  ApiDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn: ElasticIpAssociation
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        HttpVersion: http2and3
+        PriceClass: PriceClass_200
+        Origins:
+          - Id: celsyn-ec2-origin
+            DomainName: !GetAtt ApiInstance.PublicDnsName
+            CustomOriginConfig:
+              HTTPPort: 80
+              OriginProtocolPolicy: http-only
+        DefaultCacheBehavior:
+          TargetOriginId: celsyn-ec2-origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS, PUT, PATCH, POST, DELETE]
+          CachedMethods: [GET, HEAD, OPTIONS]
+          CachePolicyId: 413f8c86-7bf5-4e44-8428-c17a6909416d
+          OriginRequestPolicyId: 216adef6-5c7f-47e4-b989-5492eafa07d3
+
+  MonthlyBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: celsyn-monthly
+        BudgetLimit: { Amount: !Ref MonthlyBudgetUsd, Unit: USD }
+        BudgetType: COST
+        TimeUnit: MONTHLY
+      NotificationsWithSubscribers:
+        - Notification:
+            ComparisonOperator: GREATER_THAN
+            NotificationType: FORECASTED
+            Threshold: 80
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref NotificationEmail
+        - Notification:
+            ComparisonOperator: GREATER_THAN
+            NotificationType: ACTUAL
+            Threshold: 100
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref NotificationEmail
+
+Outputs:
+  ApiUrl:
+    Description: HTTPS API and Socket.IO base URL for VITE_API_URL.
+    Value: !Sub https://${ApiDistribution.DomainName}
+  ElasticIp:
+    Description: Add this address as a /32 entry in MongoDB Atlas Network Access.
+    Value: !Ref ElasticIp
+  InstanceId:
+    Description: Use Session Manager for shell access; SSH is deliberately disabled.
+    Value: !Ref ApiInstance
