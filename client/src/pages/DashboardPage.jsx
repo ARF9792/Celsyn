@@ -9,7 +9,7 @@ import {
   Truck,
   X,
 } from "lucide-react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import ConnectionBadge from "../components/ConnectionBadge.jsx";
 import BrandLogo from "../components/BrandLogo.jsx";
 import { useDashboardData } from "../hooks/useDashboardData.js";
@@ -46,8 +46,10 @@ export default function DashboardPage({ user, onLogout }) {
 
       <aside id="primary-navigation" className={`app-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
         <div className="sidebar-brand">
-          <BrandLogo className="sidebar-logo" />
-          <div><strong>Celsyn</strong><span>Cold-chain operations</span></div>
+          <Link className="sidebar-brand-link" to="/" aria-label="Return to the Celsyn landing page" onClick={() => setSidebarOpen(false)}>
+            <BrandLogo className="sidebar-logo" />
+            <div><strong>Celsyn</strong><span>Cold-chain operations</span></div>
+          </Link>
           <button className="sidebar-close" type="button" onClick={() => setSidebarOpen(false)} aria-label="Close navigation">
             <X size={20} />
           </button>
@@ -101,6 +103,10 @@ export default function DashboardPage({ user, onLogout }) {
         <main id="dashboard-content" className="dashboard-shell" tabIndex="-1">
           {dashboard.error && <div className="error-banner" role="alert">{dashboard.error}</div>}
           <Outlet context={dashboard} />
+          <footer className="demo-environment-note">
+            <span>Demonstration environment</span>
+            <p>This hackathon build is running with 25 simulated refrigerated vehicles. The architecture is designed around configurable fleet data rather than a fixed dashboard limit.</p>
+          </footer>
         </main>
       </div>
     </div>

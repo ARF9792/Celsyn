@@ -7,7 +7,7 @@ Celsyn uses a **precision control-room** visual direction derived from the suppl
 The existing application structure remains unchanged while the shared visual system follows these rules:
 
 - Palette: graphite-black canvas, charcoal surfaces, neutral text and a muted steel-blue selection accent.
-- Type pairing: Manrope for display headings, Inter for interface text and JetBrains Mono for telemetry values.
+- Type pairing: the local Geist variable family for display and interface text, with Geist Mono for telemetry values.
 - Radius: compact — 6px controls and 9px operational panels.
 - Surfaces: flat and precise, without gradients, glow, glassmorphism, purple or neon treatments.
 
@@ -15,7 +15,7 @@ The existing application structure remains unchanged while the shared visual sys
 
 Shared tokens live in `client/src/styles/tokens.css`.
 
-- Typography: Manrope for display headings; Inter for interface text; JetBrains Mono for IDs, measurements and timestamps.
+- Typography: Geist for display headings and interface text; Geist Mono for IDs, measurements and timestamps.
 - Canvas: `#0b0c0d`; surfaces: `#111214` and `#17181a`; primary ink: `#ededee`.
 - Action: neutral light `#e8e8eb`; selection and focus: muted steel-blue `#859cd0`.
 - Healthy: green; warning: amber; critical: red; offline: neutral grey.
@@ -40,7 +40,7 @@ Panels use one charcoal surface, one fine neutral border and no gradient. Nested
 
 ### Metrics
 
-Metrics combine a restrained icon, a live value and its unit or meaning. Telemetry values use JetBrains Mono. Safety counts do not share equal visual weight with throughput metrics: the fleet-posture component owns the primary hierarchy.
+Metrics combine a restrained icon, a live value and its unit or meaning. Telemetry values use Geist Mono. Safety counts do not share equal visual weight with throughput metrics: the fleet-posture component owns the primary hierarchy.
 
 ### Status
 
@@ -48,7 +48,7 @@ Status pills use both text and colour. Fleet distribution repeats the same seman
 
 ### Tables
 
-Rows are 48px high, keyboard selectable and retain a visible focus state. IDs and timestamps use JetBrains Mono. Overview queues are sorted critical, warning, offline and healthy; the complete Fleet route remains the source for all vehicles.
+Rows are 48px high, keyboard selectable and retain a visible focus state. IDs and timestamps use Geist Mono. Overview queues are sorted critical, warning, offline and healthy; the complete Fleet route remains the source for all vehicles.
 
 ### Incidents
 
@@ -108,4 +108,4 @@ The sign-in page uses the same graphite, neutral and operational typography syst
 
 ## Remaining frontend scope
 
-The marketing landing page is intentionally excluded. All authenticated navigation destinations now have a dedicated, responsive operational experience; future work should focus on usability findings and demo rehearsal rather than adding unsupported product scope.
+The landing page now shares Celsyn's type, mark and product imagery while remaining visually distinct from the dense operations workspace. All authenticated navigation destinations have a dedicated, responsive operational experience; future work should focus on usability findings and demo rehearsal rather than adding unsupported product scope.

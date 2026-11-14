@@ -10,7 +10,7 @@ const chapters = [
   {
     id: "fleet",
     title: <>Live fleet<br />position</>,
-    text: "See all 25 refrigerated trucks on the map, filter the fleet, and keep the selected vehicle synchronized with its telemetry.",
+    text: "See the refrigerated fleet on the map, filter by operating state, and keep the selected vehicle synchronized with its telemetry.",
     link: "/app/fleet",
     view: productViews[1],
     features: [
@@ -152,7 +152,7 @@ export default function LandingPage({ authenticated = false }) {
           <div className="wrap landing-wrap">
             <h1>Cold-chain fleet operations,<br />from telemetry to action.</h1>
             <div className="landing-hero-sub">
-              <p>Monitor 25 simulated refrigerated trucks across live temperature, position, incidents, compliance, and pipeline health.</p>
+              <p>Monitor refrigerated fleets across live temperature, position, incidents, compliance, and telemetry pipeline health.</p>
               <a className="landing-text-link" href="#fleet"><strong>See live fleet</strong><ArrowRight size={17} /></a>
             </div>
             <ProductTour />

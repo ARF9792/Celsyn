@@ -1,6 +1,28 @@
-# Celsyn
+<p align="center">
+  <img src="client/public/celsyn-logo.png" width="92" alt="Celsyn logo" />
+</p>
 
-Celsyn is a real-time cold-chain fleet telemetry monitoring platform built for the MERNIFY Hackathon. It simulates refrigerated trucks, validates and processes high-frequency telemetry, stores historical events in MongoDB, detects deterministic cold-chain incidents, and streams selective updates to an authenticated React dashboard with Socket.IO.
+<h1 align="center">Celsyn</h1>
+
+<p align="center"><strong>Real-time cold-chain fleet operations, from telemetry to action.</strong></p>
+
+<p align="center">
+  React 19 · Node.js · Express · MongoDB · Socket.IO · Leaflet · Recharts
+</p>
+
+![Celsyn landing page](docs/assets/celsyn-landing.png)
+
+Celsyn is a real-time cold-chain fleet telemetry platform built for the MERNIFY Hackathon. It validates and processes high-frequency vehicle events, stores historical telemetry in MongoDB, detects deterministic cold-chain incidents, and streams selective live updates to an authenticated operations workspace.
+
+> **Deployment link:** will be added after deployment.
+
+## Navigate
+
+- [Product capabilities](#current-feature-set)
+- [Architecture](#architecture)
+- [Run the complete demo](#run-the-complete-local-demo)
+- [API and real-time protocol](#rest-api)
+- [Testing and performance](#tests-and-production-build)
 
 ## Problem being solved
 
@@ -8,7 +30,7 @@ Temperature-sensitive cargo can be damaged before an operations team realizes th
 
 ## Current feature set
 
-- 25 refrigerated trucks with cargo-specific safe temperature ranges and routes
+- Configurable refrigerated-fleet simulation with cargo-specific safe temperature ranges and routes
 - Gradually changing location, temperature, humidity, speed, fuel, door, and reefer telemetry
 - Zod-validated single and batch ingestion with rate limiting
 - Latest-state fleet model with stale-sequence rejection
@@ -30,26 +52,11 @@ Temperature-sensitive cargo can be damaged before an operations team realizes th
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    S[Truck simulator] -->|Batched HTTP telemetry| E[Express ingestion API]
-    E --> V[Zod validation]
-    V --> P[Telemetry processor]
-    P --> L[Latest-state Map]
-    P --> A[Anomaly detector]
-    P --> B[Persistence buffer]
-    B -->|insertMany| M[(MongoDB)]
-    P --> Q[150 ms broadcast scheduler]
-    Q -->|fleet:update / truck:update| W[Socket.IO rooms]
-    A -->|alert:new| W
-    W --> D[React dashboard]
-    M -->|Bounded history REST query| D
-    C[Pipeline counters] -->|system:metrics| D
-```
+![Celsyn system architecture](docs/architecture-system.svg)
 
 The backend can ingest many events between visual updates. The broadcast scheduler retains only the newest changed state for each truck, while every accepted event is still queued for MongoDB persistence.
 
-See [docs/architecture.md](docs/architecture.md) for the data contracts, Socket.IO protocol, and processing decisions.
+The [detailed architecture plan](docs/architecture.md) covers component ownership, data contracts, ingestion and delivery sequences, Socket.IO rooms, frontend routing, security boundaries, performance controls, failure behavior, deployment, and a realistic scale-out path. It also includes a [hand-drawn whiteboard version](docs/architecture-handdrawn.svg) for presentations.
 
 ## Technology stack
 
@@ -283,7 +290,7 @@ The backend suite covers health, validation, ingestion, stale sequences, fleet s
 - Recent alert retrieval is session-backed for dashboard simplicity, though new alerts are also persisted to MongoDB.
 - Demo incidents are stored in memory and reset when the API restarts.
 - Deployment configuration, TLS termination, and production secret management remain environment-specific.
-- The landing page, dedicated truck-details route, and advanced role management remain future work.
+- Advanced role management and production identity workflows remain future work.
 
 ## Attribution
 

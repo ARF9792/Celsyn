@@ -1,5 +1,6 @@
 import { Activity, MapPinned, Thermometer } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import BrandLogo from "../components/BrandLogo.jsx";
 
 export default function LoginPage({ onLogin }) {
@@ -25,11 +26,11 @@ export default function LoginPage({ onLogin }) {
     <main className="login-shell">
       <div className="login-layout" data-enter>
         <section className="login-brand-panel">
-          <div className="login-brand"><BrandLogo className="login-logo" /><div><strong>Celsyn</strong><span>Cold-chain operations</span></div></div>
+          <Link className="login-brand" to="/" aria-label="Return to the Celsyn landing page"><BrandLogo className="login-logo" /><div><strong>Celsyn</strong><span>Cold-chain operations</span></div></Link>
           <div className="login-brand-copy">
             <p className="section-kicker">Fleet monitoring for operators</p>
             <h1>See which refrigerated truck needs attention now.</h1>
-            <p>Celsyn tracks live temperature, location and refrigeration state across 25 simulated trucks.</p>
+            <p>Celsyn keeps live temperature, location, refrigeration state, incidents and compliance connected across the fleet.</p>
           </div>
           <div className="login-capabilities" aria-label="Platform capabilities">
             <span><MapPinned size={17} />Live fleet positions</span>

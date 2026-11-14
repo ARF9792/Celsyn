@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-labelledby="title description">
+  <title id="title">Celsyn architecture whiteboard sketch</title>
+  <desc id="description">A hand-drawn presentation version of the Celsyn architecture showing telemetry sources, API validation, processing, MongoDB, Socket.IO and the React operations workspace.</desc>
+  <defs>
+    <pattern id="paper" width="32" height="32" patternUnits="userSpaceOnUse">
+      <rect width="32" height="32" fill="#f7f3e9"/>
+      <path d="M0 31.5H32" stroke="#d9e2e8" stroke-width="1" opacity=".58"/>
+    </pattern>
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="2" seed="8" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="pencil-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="#27384c" stroke-width="1.6"/>
+    </marker>
+    <style>
+      .hand{font-family:'Bradley Hand','Segoe Print','Comic Sans MS',cursive;fill:#253548}
+      .title{font-size:52px;font-weight:700}
+      .note{font-size:20px;fill:#526375}
+      .box{fill:#fffdf7;stroke:#27384c;stroke-width:3;filter:url(#rough)}
+      .box-blue{fill:#eef5fc;stroke:#355f8a;stroke-width:3;filter:url(#rough)}
+      .box-green{fill:#eef7f0;stroke:#46715d;stroke-width:3;filter:url(#rough)}
+      .box-title{font-size:27px;font-weight:700}
+      .box-copy{font-size:18px;fill:#45586c}
+      .tiny{font-size:16px;fill:#657689}
+      .arrow{fill:none;stroke:#27384c;stroke-width:3;marker-end:url(#pencil-arrow);filter:url(#rough)}
+      .arrow-blue{fill:none;stroke:#3c6f9f;stroke-width:4;marker-end:url(#pencil-arrow);filter:url(#rough)}
+      .arrow-green{fill:none;stroke:#4f7d67;stroke-width:4;marker-end:url(#pencil-arrow);filter:url(#rough)}
+      .scribble{fill:none;stroke:#bd6a59;stroke-width:3;filter:url(#rough)}
+    </style>
+  </defs>
+  <rect width="1600" height="1050" fill="url(#paper)"/>
+  <text x="72" y="78" class="hand title">Celsyn — how telemetry reaches an operator</text>
+  <text x="76" y="114" class="hand note">whiteboard view · same system as the engineering diagram</text>
+  <path class="scribble" d="M72 128 C340 119 600 137 940 125"/>
+
+  <g transform="translate(70 190) rotate(-1 130 110)">
+    <rect class="box" width="250" height="220" rx="18"/>
+    <text x="24" y="48" class="hand box-title">Refrigerated fleet</text>
+    <text x="24" y="86" class="hand box-copy">simulator today</text>
+    <text x="24" y="116" class="hand box-copy">device adapters later</text>
+    <text x="24" y="158" class="hand tiny">location · temperature</text>
+    <text x="24" y="184" class="hand tiny">fuel · door · reefer</text>
+  </g>
+
+  <g transform="translate(390 168) rotate(1 145 135)">
+    <rect class="box-blue" width="290" height="270" rx="18"/>
+    <text x="24" y="48" class="hand box-title">Express edge</text>
+    <text x="24" y="88" class="hand box-copy">1. receive HTTP batches</text>
+    <text x="24" y="121" class="hand box-copy">2. validate with Zod</text>
+    <text x="24" y="154" class="hand box-copy">3. reject stale sequences</text>
+    <text x="24" y="187" class="hand box-copy">4. enforce rate limits</text>
+    <path class="scribble" d="M24 207 C112 213 186 202 260 210"/>
+    <text x="24" y="240" class="hand tiny">JWT protects operator routes</text>
+  </g>
+
+  <g transform="translate(760 160) rotate(-.6 185 170)">
+    <rect class="box-blue" width="370" height="340" rx="18"/>
+    <text x="24" y="48" class="hand box-title">Telemetry processor</text>
+    <text x="24" y="86" class="hand box-copy">advance latest state</text>
+    <path class="arrow" d="M30 112 C110 112 116 112 174 112"/>
+    <text x="26" y="146" class="hand tiny">deterministic</text>
+    <text x="26" y="168" class="hand tiny">incident rules</text>
+    <text x="210" y="146" class="hand tiny">newest state</text>
+    <text x="210" y="168" class="hand tiny">per vehicle</text>
+    <rect x="20" y="190" width="152" height="104" rx="14" fill="#fffdf7" stroke="#27384c" stroke-width="2.5"/>
+    <text x="38" y="225" class="hand box-copy">write buffer</text>
+    <text x="38" y="258" class="hand tiny">400 ms / 500</text>
+    <rect x="198" y="190" width="152" height="104" rx="14" fill="#fffdf7" stroke="#27384c" stroke-width="2.5"/>
+    <text x="216" y="225" class="hand box-copy">broadcast</text>
+    <text x="216" y="258" class="hand tiny">150 ms cadence</text>
+    <text x="24" y="320" class="hand tiny">counters watch every path ↗</text>
+  </g>
+
+  <g transform="translate(1210 180) rotate(1.2 145 150)">
+    <rect class="box-green" width="290" height="300" rx="18"/>
+    <text x="24" y="48" class="hand box-title">MongoDB</text>
+    <text x="24" y="86" class="hand box-copy">TelemetryEvent</text>
+    <text x="24" y="118" class="hand box-copy">Alert</text>
+    <path class="scribble" d="M24 139 C112 144 190 134 260 142"/>
+    <text x="24" y="176" class="hand tiny">unique eventId</text>
+    <text x="24" y="204" class="hand tiny">truckId + timestamp</text>
+    <text x="24" y="250" class="hand box-copy">bounded history</text>
+    <text x="24" y="278" class="hand box-copy">+ compliance reads</text>
+  </g>
+
+  <path class="arrow-blue" d="M320 295 C342 294 364 292 390 292"/>
+  <text x="324" y="273" class="hand tiny">batch JSON</text>
+  <path class="arrow-blue" d="M680 296 C708 292 732 290 760 292"/>
+  <text x="692" y="270" class="hand tiny">valid only</text>
+  <path class="arrow-green" d="M1130 352 C1160 345 1182 336 1210 328"/>
+  <text x="1124" y="318" class="hand tiny">persist all</text>
+
+  <g transform="translate(180 600) rotate(.5 260 155)">
+    <rect class="box-blue" width="520" height="310" rx="20"/>
+    <text x="28" y="52" class="hand box-title">Socket.IO gateway</text>
+    <text x="28" y="92" class="hand box-copy">fleet room → compact changed states</text>
+    <text x="28" y="128" class="hand box-copy">truck room → full selected telemetry</text>
+    <text x="28" y="164" class="hand box-copy">alerts room → new detections</text>
+    <text x="28" y="200" class="hand box-copy">system metrics → once per second</text>
+    <path class="scribble" d="M26 226 C214 234 350 216 486 228"/>
+    <text x="28" y="270" class="hand tiny">JWT checked again during the socket handshake</text>
+  </g>
+
+  <g transform="translate(850 580) rotate(-.8 300 185)">
+    <rect class="box" width="610" height="370" rx="20"/>
+    <text x="28" y="52" class="hand box-title">React operations workspace</text>
+    <text x="30" y="100" class="hand box-copy">Overview</text>
+    <text x="210" y="100" class="hand box-copy">Live fleet map</text>
+    <text x="410" y="100" class="hand box-copy">Truck record</text>
+    <text x="30" y="148" class="hand box-copy">Incident center</text>
+    <text x="210" y="148" class="hand box-copy">Compliance</text>
+    <text x="410" y="148" class="hand box-copy">System health</text>
+    <path class="scribble" d="M28 176 C206 185 396 165 578 178"/>
+    <text x="28" y="220" class="hand box-copy">REST loads initial + historical state</text>
+    <text x="28" y="256" class="hand box-copy">Socket.IO updates only subscribed views</text>
+    <text x="28" y="292" class="hand box-copy">map, table and detail share one selection</text>
+    <text x="28" y="338" class="hand tiny">browser retains the latest 300 chart points</text>
+  </g>
+
+  <path class="arrow-blue" d="M954 500 C900 560 744 600 700 680"/>
+  <text x="736" y="574" class="hand tiny">coalesced live updates</text>
+  <path class="arrow-blue" d="M700 760 C750 758 800 752 850 748"/>
+  <text x="720" y="734" class="hand tiny">selective rooms</text>
+  <path class="arrow-green" d="M1320 480 C1350 530 1374 548 1370 580"/>
+  <text x="1372" y="535" class="hand tiny">history REST</text>
+  <path class="arrow" d="M1020 950 C780 1014 488 996 450 910"/>
+  <text x="658" y="1008" class="hand note">operator actions come back through authenticated REST</text>
+
+  <g transform="translate(74 974)">
+    <text class="hand tiny">Key idea: durability and live delivery are separate, so the dashboard stays current without dropping accepted telemetry.</text>
+  </g>
+</svg>
