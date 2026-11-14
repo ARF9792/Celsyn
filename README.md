@@ -14,7 +14,9 @@
 
 Celsyn is a real-time cold-chain fleet telemetry platform built for the MERNIFY Hackathon. It validates and processes high-frequency vehicle events, stores historical telemetry in MongoDB, detects deterministic cold-chain incidents, and streams selective live updates to an authenticated operations workspace.
 
-> **Deployment link:** will be added after deployment.
+> 🚀 **Live Demo:** [https://client-pink-three-61.vercel.app](https://client-pink-three-61.vercel.app)
+> 
+> ⚙️ **Backend API:** [https://d4v3wx0jtp0fj.cloudfront.net](https://d4v3wx0jtp0fj.cloudfront.net) · `demo@chainpulse.dev` / `chainpulse-demo`
 
 ## Navigate
 
