@@ -1,12 +1,16 @@
+import { ArrowUpRight, LocateFixed, MapPin } from "lucide-react";
 import { formatNumber, formatTime } from "../utils/telemetry.js";
 
-const Detail = ({ label, value }) => (
-  <div className="detail-item"><span>{label}</span><strong>{value}</strong></div>
+const Detail = ({ label, value, wide = false }) => (
+  <div className={`detail-item ${wide ? "detail-item-wide" : ""}`}><span>{label}</span><strong>{value}</strong></div>
 );
 
-export default function TruckDetails({ truck, onTrigger, demoPending }) {
+export default function TruckDetails({ truck, onTrigger, demoPending, onLocate }) {
   if (!truck) return <section className="panel empty-panel">Select a truck to inspect it.</section>;
   const telemetry = truck.latestTelemetry;
+  const position = telemetry?.location
+    ? `${telemetry.location.lat.toFixed(4)}, ${telemetry.location.lng.toFixed(4)}`
+    : "—";
 
   return (
     <section className="panel truck-panel">
@@ -25,6 +29,15 @@ export default function TruckDetails({ truck, onTrigger, demoPending }) {
         <Detail label="Door" value={telemetry ? (telemetry.doorOpen ? "Open" : "Closed") : "—"} />
         <Detail label="Reefer" value={telemetry?.reefer?.status || "—"} />
         <Detail label="Last update" value={formatTime(telemetry?.timestamp)} />
+        <Detail label="Current position" value={position} wide />
+      </div>
+      <div className="truck-actions">
+        <button className="icon-text-button truck-locate-button" type="button" onClick={onLocate}>
+          <LocateFixed size={16} aria-hidden="true" />Locate on map
+        </button>
+        <button className="future-truck-link" type="button" disabled title="Dedicated truck details will be added in the next screen pass">
+          <MapPin size={16} aria-hidden="true" />Open full record<ArrowUpRight size={14} aria-hidden="true" />
+        </button>
       </div>
       <button className="demo-button" type="button" onClick={onTrigger} disabled={demoPending}>
         {demoPending ? "Activating…" : "Trigger temperature excursion"}

@@ -11,6 +11,8 @@ export default function FleetTable({
   actionTo,
   actionLabel,
   variant = "default",
+  totalCount,
+  emptyMessage = "No vehicles are currently available.",
 }) {
   return (
     <section className={`panel fleet-panel fleet-panel-${variant}`}>
@@ -21,7 +23,11 @@ export default function FleetTable({
         </div>
         {actionTo ? (
           <Link className="panel-action" to={actionTo}>{actionLabel}<ArrowUpRight size={15} aria-hidden="true" /></Link>
-        ) : <span className="record-count">{trucks.length} trucks</span>}
+        ) : (
+          <span className="record-count">
+            {totalCount && totalCount !== trucks.length ? `${trucks.length} of ${totalCount}` : trucks.length} trucks
+          </span>
+        )}
       </div>
       <div className="table-wrap">
         <table>
@@ -32,6 +38,11 @@ export default function FleetTable({
             </tr>
           </thead>
           <tbody>
+            {trucks.length === 0 && (
+              <tr className="table-empty-row">
+                <td colSpan="7">{emptyMessage}</td>
+              </tr>
+            )}
             {trucks.map((truck) => {
               const telemetry = truck.latestTelemetry;
               return (

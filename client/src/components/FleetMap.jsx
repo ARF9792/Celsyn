@@ -50,7 +50,7 @@ export default function FleetMap({
   const fitTrucks = useCallback((fleet = trucksRef.current, options = {}) => {
     const map = mapRef.current;
     const located = fleet.filter(hasLocation);
-    if (!map || !map.loaded() || located.length === 0) return;
+    if (!map || !map.isStyleLoaded() || located.length === 0) return;
 
     const bounds = new LngLatBounds();
     located.forEach((truck) => {
@@ -67,7 +67,7 @@ export default function FleetMap({
   const focusTruck = useCallback((truckId) => {
     const map = mapRef.current;
     const truck = trucksRef.current.find((item) => item.truckId === truckId);
-    if (!map || !map.loaded() || !hasLocation(truck)) return;
+    if (!map || !map.isStyleLoaded() || !hasLocation(truck)) return;
     const { lng, lat } = truck.latestTelemetry.location;
     map.easeTo({
       center: [lng, lat],
@@ -104,7 +104,7 @@ export default function FleetMap({
       }
     };
     const onError = () => {
-      if (!map.loaded()) {
+      if (!map.isStyleLoaded()) {
         setMapError("The basemap could not be loaded. Live vehicle data is still available in the fleet table.");
       }
     };
@@ -156,7 +156,8 @@ export default function FleetMap({
 
       const { lat, lng } = truck.latestTelemetry.location;
       entry.marker.setLngLat([lng, lat]);
-      entry.element.className = `fleet-map-marker marker-${truck.status}`;
+      entry.element.classList.remove("marker-healthy", "marker-warning", "marker-critical", "marker-offline");
+      entry.element.classList.add("fleet-map-marker", `marker-${truck.status}`);
       entry.element.classList.toggle("is-selected", truck.truckId === selectedTruckId);
       entry.element.classList.toggle(
         "is-filtered-out",
@@ -178,7 +179,7 @@ export default function FleetMap({
       }
     });
 
-    if (map.loaded() && !initialFitRef.current && currentIds.size > 0) {
+    if (map.isStyleLoaded() && !initialFitRef.current && currentIds.size > 0) {
       fitTrucks(trucks, { duration: 0 });
       initialFitRef.current = true;
     }
