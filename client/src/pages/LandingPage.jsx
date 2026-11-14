@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import BrandLogo from "../components/BrandLogo.jsx";
 import LandingMotion from "../components/landing/LandingMotion.jsx";
 import ParticleWave from "../components/landing/ParticleWave.jsx";
-import ProductTour, { ProductScreenshot, productViews } from "../components/landing/ProductTour.jsx";
+import ProductTour, { ProductScreenshot, ProductScreenStack, productViews } from "../components/landing/ProductTour.jsx";
 import "../styles/landing.css";
 
 const chapters = [
@@ -204,19 +204,7 @@ export default function LandingPage({ authenticated = false }) {
               <h2>Explore the operating views</h2>
               <Link className="landing-text-link" to={dashboardTarget}>Open dashboard <ArrowRight size={16} /></Link>
             </div>
-            <div className="landing-card-grid">
-              {[
-                [productViews[1], "Fleet geography", "Select a refrigerated vehicle from the map or the directory."],
-                [productViews[2], "Incident review", "Filter detections and open the affected truck in context."],
-                [productViews[4], "Pipeline health", "Inspect live ingestion, persistence, broadcast, and latency."],
-              ].map(([view, title, text]) => (
-                <Link key={view.id} className="landing-product-card" to={view.id === "fleet" ? "/app/fleet" : view.id === "incidents" ? "/app/incidents" : "/app/system"}>
-                  <ProductScreenshot view={view} />
-                  <h3>{title}<ArrowRight size={15} /></h3>
-                  <p>{text}</p>
-                </Link>
-              ))}
-            </div>
+            <ProductScreenStack />
           </div>
         </section>
 
