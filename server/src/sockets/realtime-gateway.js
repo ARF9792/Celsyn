@@ -14,6 +14,7 @@ const compactTruckState = (state) => ({
   sequence: state.sequence,
   truckId: state.truckId,
   timestamp: state.timestamp,
+  location: state.location,
   temperature: state.temperature,
   humidity: state.humidity,
   speed: state.speed,

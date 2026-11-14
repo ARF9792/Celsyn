@@ -75,5 +75,31 @@ describe("selective Socket.IO broadcasting", () => {
       error: "Unknown truck ID",
     });
   });
+
+  it("includes the current location in compact fleet updates", async () => {
+    const server = createServer();
+    const gateway = new RealtimeGateway(server, { broadcastIntervalMs: 20 });
+    await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address();
+    const clientA = await openClient(`http://127.0.0.1:${address.port}`);
+    resources.push({ server, gateway, clientA });
+
+    expect(await subscribe(clientA, "subscribe:fleet")).toMatchObject({ ok: true });
+    const received = new Promise((resolve) => clientA.once("fleet:update", resolve));
+    const telemetry = createTelemetry({ location: { lat: 18.5204, lng: 73.8567 } });
+
+    gateway.queueTelemetry({
+      ...telemetry,
+      status: "healthy",
+      receivedAt: new Date().toISOString(),
+    });
+
+    const update = await received;
+    expect(update.changedTrucks).toHaveLength(1);
+    expect(update.changedTrucks[0]).toMatchObject({
+      truckId: "TRK-001",
+      location: telemetry.location,
+    });
+  });
 });
 
